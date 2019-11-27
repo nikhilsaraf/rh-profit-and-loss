@@ -13,6 +13,12 @@ pd.options.mode.chained_assignment = None  # default='warn', to silence the erro
 import Robinhood
 
 
+folio = {}
+# symbol -> [object]
+# object: units, buy_price
+profitm = {}
+# symbol -> float
+
 ### ORDER HISTORY STUFF ###
 
 def fetch_json_by_url(my_trader, url):
@@ -31,9 +37,70 @@ def get_symbol_from_instrument_url(url, df):
    
     return symbol, df
 
+
+def printMaps():
+    print('')
+    
+    print('folio')
+    for symbol in sorted(folio):
+        print(symbol, '--->', folio[symbol])
+    print('')
+
+    total_profit = 0.0
+    print('profitm')
+    for symbol in sorted(profitm):
+        p = profitm[symbol]
+        print(symbol, ',', p)
+        total_profit += p
+    print('')
+    print('total_profit = {}'.format(total_profit))
+    print('')
+
 def order_item_info(order, my_trader, df):
     #side: .side,  price: .average_price, shares: .cumulative_quantity, instrument: .instrument, date : .last_transaction_at
     symbol, df = get_symbol_from_instrument_url(order['instrument'], df)
+
+    symHistory = folio.get(symbol)
+    if symHistory is None:
+        symHistory = []
+        profitm[symbol] = 0.0
+
+    oside = order['side']
+    for e in order['executions']:
+        print(e['timestamp'], e['id'], symbol, order['id'], order['side'], order['type'], e['price'], e['quantity'])
+
+        ep = float(e['price'])
+        eq = float(e['quantity'])
+        if oside == 'buy':
+            symHistory.append({ 'price': ep, 'quantity': eq })
+        else:   # consume from symHistory
+            while len(symHistory) > 0 and eq > 0:
+                obj = symHistory[0]
+                if obj['quantity'] >= eq:
+                    profitm[symbol] += (eq * (ep - obj['price']))
+                    obj['quantity'] -= eq
+                    eq = 0
+
+                    if obj['quantity'] == 0:
+                        symHistory.pop(0)
+                else:
+                    profitm[symbol] += (obj['quantity'] * (ep - obj['price']))
+                    eq -= obj['quantity']
+                    obj['quantity'] = 0
+                    symHistory.pop(0)
+
+            if len(symHistory) == 0 and eq > 0:
+                print('')
+                print('error, len(symHistory) == 0 and eq = {} for last trade'.format(eq))
+                print('')
+                raise Exception()
+        folio[symbol] = symHistory
+
+        if order['state'] != 'filled':
+            print('state not \'filled\' ({}) but we have {} executions (last one printed above).'.format(order['state'], len(order['executions'])))
+            raise Exception()
+        # printmaps after every execution
+        printMaps()
     
     order_info_dict = {
         'side': order['side'],
@@ -82,7 +149,7 @@ def get_order_history(my_trader):
     instruments_df = pd.read_pickle('symbol_and_instrument_urls')
 
     # Create a big dict of order history
-    orders = [order_item_info(order, my_trader, instruments_df) for order in past_orders]
+    orders = [order_item_info(order, my_trader, instruments_df) for order in reversed(past_orders)]
 
     # Save our pickled database of instrument-url lookups
     instruments_df.to_pickle('symbol_and_instrument_urls')
