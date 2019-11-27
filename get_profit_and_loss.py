@@ -71,18 +71,18 @@ def rh_profit_and_loss(username=None, password=None, starting_allocation=5000, s
                 stock.net_pl += order.pl()
 
             # Handle outstanding shares - should be current positions
-            if stock.net_shares > 0:
-                
-                requestResponse = requests.get("https://api.iextrading.com/1.0/stock/{}/price".format(stock.symbol.lower()))
-                json = requestResponse.json()
-                last_price = float(json)
-
-                # Add currently held shares from net_pl as if selling now (unrealized PnL)
-                stock.net_pl += stock.net_shares * last_price
-                    
+            #if stock.net_shares > 0:
+            #    
+            #    requestResponse = requests.get("https://api.iextrading.com/1.0/stock/{}/price".format(stock.symbol.lower()))
+            #    json = requestResponse.json()
+            #    last_price = float(json)
+            #
+            #    # Add currently held shares from net_pl as if selling now (unrealized PnL)
+            #    stock.net_pl += stock.net_shares * last_price
+            #        
             # Should handle free gift stocks
-            elif stock.net_shares < 0:
-                stock.symbol += ' '
+            #elif stock.net_shares < 0:
+            #    stock.symbol += ' '
 
 
     # INSTANTIATE ROBINHOOD my_trader #
