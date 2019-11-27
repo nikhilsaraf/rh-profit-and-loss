@@ -15,7 +15,7 @@ import Robinhood
 
 folio = {}
 # symbol -> [object]
-# object: units, buy_price
+# object: units, buy_price, buy_timestamp
 profitm = {}
 # symbol -> float
 
@@ -67,14 +67,12 @@ def order_item_info(order, my_trader, df):
 
     oside = order['side']
     for e in order['executions']:
-        if e['timestamp'].startswith('2019'):
-            continue
         print(e['timestamp'], e['id'], symbol, order['id'], order['side'], order['type'], e['price'], e['quantity'])
 
         ep = float(e['price'])
         eq = float(e['quantity'])
         if oside == 'buy':
-            symHistory.append({ 'price': ep, 'quantity': eq })
+            symHistory.append({ 'price': ep, 'quantity': eq, 'timestamp': e['timestamp'] })
         else:   # consume from symHistory
             while len(symHistory) > 0 and eq > 0:
                 obj = symHistory[0]
