@@ -118,7 +118,7 @@ class Robinhood:
                 payload['mfa_code'] = mfa_code
 
             try:
-                res = self.session.post('https://api.robinhood.com/oauth2/token/', data=payload, timeout=15)
+                res = self.session.post('https://api.robinhood.com/oauth2/token/', data=payload, timeout=300)
                 res.raise_for_status()
                 data = res.json()
             except requests.exceptions.HTTPError:
@@ -144,7 +144,7 @@ class Robinhood:
         """
 
         try:
-            req = self.session.post(endpoints.logout(), timeout=15)
+            req = self.session.post(endpoints.logout(), timeout=300)
             req.raise_for_status()
         except requests.exceptions.HTTPError as err_msg:
             warnings.warn('Failed to log out ' + repr(err_msg))
@@ -162,7 +162,7 @@ class Robinhood:
     def investment_profile(self):
         """Fetch investment_profile """
 
-        res = self.session.get(endpoints.investment_profile(), timeout=15)
+        res = self.session.get(endpoints.investment_profile(), timeout=300)
         res.raise_for_status()  # will throw without auth
         data = res.json()
 
@@ -179,7 +179,7 @@ class Robinhood:
                 (:obj:`dict`): JSON contents from `instruments` endpoint
         """
 
-        res = self.session.get(endpoints.instruments(), params={'query': stock.upper()}, timeout=15)
+        res = self.session.get(endpoints.instruments(), params={'query': stock.upper()}, timeout=300)
         res.raise_for_status()
         res = res.json()
 
@@ -202,7 +202,7 @@ class Robinhood:
         url = str(endpoints.instruments()) + str(id) + "/"
 
         try:
-            req = requests.get(url, timeout=15)
+            req = requests.get(url, timeout=300)
             req.raise_for_status()
             data = req.json()
         except requests.exceptions.HTTPError:
@@ -230,7 +230,7 @@ class Robinhood:
 
         #Check for validity of symbol
         try:
-            req = requests.get(url, headers=self.headers, timeout=15)
+            req = requests.get(url, headers=self.headers, timeout=300)
             req.raise_for_status()
             data = req.json()
         except requests.exceptions.HTTPError:
@@ -255,7 +255,7 @@ class Robinhood:
         url = str(endpoints.quotes()) + "?symbols=" + ",".join(stocks)
 
         try:
-            req = requests.get(url, headers=self.headers, timeout=15)
+            req = requests.get(url, headers=self.headers, timeout=300)
             req.raise_for_status()
             data = req.json()
         except requests.exceptions.HTTPError:
@@ -348,7 +348,7 @@ class Robinhood:
             'bounds': bounds.name.lower()
         }
 
-        res = self.session.get(endpoints.historicals(), params=params, timeout=15)
+        res = self.session.get(endpoints.historicals(), params=params, timeout=300)
         return res.json()
 
 
@@ -361,7 +361,7 @@ class Robinhood:
                 (:obj:`dict`) values returned from `news` endpoint
         """
 
-        return self.session.get(endpoints.news(stock.upper()), timeout=15).json()
+        return self.session.get(endpoints.news(stock.upper()), timeout=300).json()
 
 
     def print_quote(self, stock=''):    # pragma: no cover
@@ -585,7 +585,7 @@ class Robinhood:
                 (:obj:`dict`): `accounts` endpoint payload
         """
 
-        res = self.session.get(endpoints.accounts(), timeout=15)
+        res = self.session.get(endpoints.accounts(), timeout=300)
         res.raise_for_status()  # auth required
         res = res.json()
 
@@ -597,7 +597,7 @@ class Robinhood:
             Flat wrapper for fetching URL directly
         """
 
-        return self.session.get(url, timeout=15).json()
+        return self.session.get(url, timeout=300).json()
 
     def get_popularity(self, stock=''):
         """Get the number of robinhood users who own the given stock
@@ -658,7 +658,7 @@ class Robinhood:
         Returns: dictionary of options market data.
         """
         if not self.oauth_token:
-            res = self.session.post(endpoints.convert_token(), timeout=15)
+            res = self.session.post(endpoints.convert_token(), timeout=300)
             res.raise_for_status()
             res = res.json()
             self.oauth_token = res["access_token"]
@@ -688,7 +688,7 @@ class Robinhood:
 
         #Check for validity of symbol
         try:
-            req = requests.get(url, timeout=15)
+            req = requests.get(url, timeout=300)
             req.raise_for_status()
             data = req.json()
         except requests.exceptions.HTTPError:
@@ -711,7 +711,7 @@ class Robinhood:
     def portfolios(self):
         """Returns the user's portfolio data """
 
-        req = self.session.get(endpoints.portfolios(), timeout=15)
+        req = self.session.get(endpoints.portfolios(), timeout=300)
         req.raise_for_status()
 
         return req.json()['results'][0]
@@ -821,7 +821,7 @@ class Robinhood:
                 (:obj:`dict`): JSON dict from getting orders
         """
 
-        return self.session.get(endpoints.orders(orderId), timeout=15).json()
+        return self.session.get(endpoints.orders(orderId), timeout=300).json()
     @login_required
     
     def options_order_history(self, orderId=None):
@@ -831,7 +831,7 @@ class Robinhood:
                 (:obj:`dict`): JSON dict from getting orders
         """
 
-        return self.session.get(endpoints.options_orders(orderId), timeout=15).json()
+        return self.session.get(endpoints.options_orders(orderId), timeout=300).json()
 
 
     def dividends(self):
@@ -841,7 +841,7 @@ class Robinhood:
                 (:obj: `dict`): JSON dict from getting dividends
         """
 
-        return self.session.get(endpoints.dividends(), timeout=15).json()
+        return self.session.get(endpoints.dividends(), timeout=300).json()
 
 
     ###########################################################################
@@ -855,7 +855,7 @@ class Robinhood:
                 (:object: `dict`): JSON dict from getting positions
         """
 
-        return self.session.get(endpoints.positions(), timeout=15).json()
+        return self.session.get(endpoints.positions(), timeout=300).json()
 
 
     def securities_owned(self):
@@ -865,7 +865,7 @@ class Robinhood:
                 (:object: `dict`): Non-zero positions
         """
 
-        return self.session.get(endpoints.positions() + '?nonzero=true', timeout=15).json()
+        return self.session.get(endpoints.positions() + '?nonzero=true', timeout=300).json()
 
 
     ###########################################################################
@@ -929,7 +929,7 @@ class Robinhood:
         #    instrument['symbol']
         #)
 
-        res = self.session.post(endpoints.orders(), data=payload, timeout=15)
+        res = self.session.post(endpoints.orders(), data=payload, timeout=300)
         res.raise_for_status()
 
         return res
@@ -1275,7 +1275,7 @@ class Robinhood:
             instrument_URL = self.instruments(symbol)[0]['url']
 
         if(symbol is None):
-            symbol = self.session.get(instrument_URL, timeout=15).json()['symbol']
+            symbol = self.session.get(instrument_URL, timeout=300).json()['symbol']
 
         if(side is None):
             raise(ValueError('Order is neither buy nor sell in call to submit_order'))
@@ -1349,7 +1349,7 @@ class Robinhood:
             if(value is not None):
                 payload[field] = value
 
-        res = self.session.post(endpoints.orders(), data=payload, timeout=15)
+        res = self.session.post(endpoints.orders(), data=payload, timeout=300)
         print(res.json())
         res.raise_for_status()
 
@@ -1373,14 +1373,14 @@ class Robinhood:
             """
             if isinstance(order_id, str):
                 try:
-                    order = self.session.get(endpoints.orders() + order_id, timeout=15).json()
+                    order = self.session.get(endpoints.orders() + order_id, timeout=300).json()
                 except (requests.exceptions.HTTPError) as err_msg:
                     raise ValueError('Failed to get Order for ID: ' + order_id
                         + '\n Error message: '+ repr(err_msg))
 
                 if order.get('cancel') is not None:
                     try:
-                        res = self.session.post(order['cancel'], timeout=15)
+                        res = self.session.post(order['cancel'], timeout=300)
                         res.raise_for_status()
                         return res
                     except (requests.exceptions.HTTPError) as err_msg:
@@ -1391,14 +1391,14 @@ class Robinhood:
             if isinstance(order_id, dict):
                 order_id = order_id['id']
                 try:
-                    order = self.session.get(endpoints.orders() + order_id, timeout=15).json()
+                    order = self.session.get(endpoints.orders() + order_id, timeout=300).json()
                 except (requests.exceptions.HTTPError) as err_msg:
                     raise ValueError('Failed to get Order for ID: ' + order_id
                         + '\n Error message: '+ repr(err_msg))
 
                 if order.get('cancel') is not None:
                     try:
-                        res = self.session.post(order['cancel'], timeout=15)
+                        res = self.session.post(order['cancel'], timeout=300)
                         res.raise_for_status()
                         return res
                     except (requests.exceptions.HTTPError) as err_msg:
