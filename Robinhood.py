@@ -4,6 +4,8 @@
 import logging
 import warnings
 
+import robin_stocks as r
+
 from enum import Enum
 
 #External dependencies
@@ -94,6 +96,15 @@ class Robinhood:
             self.username = username
             self.password = password
             
+            # try getting access_token with new API
+            l = r.login(username, password)
+            if 'access_token' in l.keys():
+                self.oauth_token = l['access_token']
+                self.headers['Authorization'] = 'Bearer ' + self.oauth_token
+                print(l)
+                return True
+            # /try getting access_token with new API
+
             payload = {
                 'client_id': 'c82SH0WZOsabOXGP2sxqcj34FxkvfnWRZBKlBjFS',
                 'expires_in': 86400,
