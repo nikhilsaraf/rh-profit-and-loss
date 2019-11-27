@@ -319,6 +319,6 @@ if __name__ == '__main__':
                         end_date=end_date, 
                         starting_allocation=starting_allocation, 
                         csv_export=csv_export, 
-                        buy_and_hold=1,
+                        buy_and_hold=0,
                         options=1, 
                         pickle=pickle)
