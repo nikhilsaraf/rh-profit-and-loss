@@ -67,6 +67,8 @@ def order_item_info(order, my_trader, df):
 
     oside = order['side']
     for e in order['executions']:
+        if e['timestamp'].startswith('2019'):
+            continue
         print(e['timestamp'], e['id'], symbol, order['id'], order['side'], order['type'], e['price'], e['quantity'])
 
         ep = float(e['price'])
