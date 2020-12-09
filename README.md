@@ -2,6 +2,26 @@
 
 A Python script to get a look at your trading history from trading options and individual equities on Robinhood: calculate profit/loss, sum dividend payouts and generate buy-and-hold comparison. 
 
+## Instructions for Nikhil
+
+### Get oath access_token
+
+Go to robinhood.com. Log out if you're already logged in
+Right click > Inspect element
+Click on Network tab
+-Enter "token" in the input line at the top where it says "Filter URLs"
+With the network monitor-er open, login to Robinhood
+you will see a request token/
+the response to this will have your oath access_token
+If this expires then you will need to get it again
+
+Put this oath access_token value in Robinhood.py
+
+### Sample Run Command
+
+(fill in the empty string params)
+python3 get_profit_and_loss.py --csv --username "" --password "" --start_date 'January 1, 2020' --access_token=""
+
 ## Features
 
 - *Calculate individual equities' trading pnl, dividends received, options trading pnl*
@@ -120,4 +140,4 @@ six
 
 - Some of the order history code is borrowed from (https://github.com/rmccorm4/Robinhood-Scraper/blob/master/Robinhood/robinhood_pl.py) 
 
-- For the buy-and-hold calculation, QQQ historical data is from (https://www.kaggle.com/qks1lver/amex-nyse-nasdaq-stock-histories) and IEX, depending on how far back you're going. 
+- For the buy-and-hold calculation, QQQ historical data is from (https://www.kaggle.com/qks1lver/amex-nyse-nasdaq-stock-histories) and IEX, depending on how far back you're going.

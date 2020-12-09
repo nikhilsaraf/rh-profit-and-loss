@@ -10,7 +10,7 @@ import operator
 import TW_robinhood_scripts as rh
 import Robinhood
 
-def rh_profit_and_loss(username=None, password=None, starting_allocation=5000, start_date=None, end_date=None, csv_export=1, buy_and_hold=0, pickle=0, options=1):
+def rh_profit_and_loss(username=None, password=None, access_token=None, starting_allocation=5000, start_date=None, end_date=None, csv_export=1, buy_and_hold=0, pickle=0, options=1):
 
     # from rmccorm4 Robinhood-Scraper
     class Order:
@@ -87,7 +87,9 @@ def rh_profit_and_loss(username=None, password=None, starting_allocation=5000, s
 
     # INSTANTIATE ROBINHOOD my_trader #
     my_trader = Robinhood.Robinhood()
-    logged_in = my_trader.login(username=username, password=password)
+    logged_in = my_trader.set_oath_access_token(username, password, access_token)
+    if not logged_in:
+        logged_in = my_trader.login(username=username, password=password)
     my_account = my_trader.get_account()['url']
 
     df_order_history, _ = rh.get_order_history(my_trader)
@@ -267,6 +269,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()  
     parser.add_argument("--username", help="username (required)")
     parser.add_argument("--password", help="password (required)")
+    parser.add_argument("--access_token", help="oath access_token (required)")
     parser.add_argument("--start_date", help="begin date for calculations")
     parser.add_argument("--end_date", help="begin date for calculations")
     parser.add_argument("--starting_allocation", help="starting allocation for buy and hold")
@@ -275,10 +278,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if args.username and args.password:
+    if args.username and args.password and args.access_token:
         print("Working...")
     else:
-        print("Please enter a username and password and try again!")
+        print("Please enter a username and password and access_token and try again!")
         sys.exit()
 
     # check for flag
@@ -315,6 +318,7 @@ if __name__ == '__main__':
 
     rh_profit_and_loss(username=args.username, 
                         password=args.password,
+                        access_token=args.access_token,
                         start_date=start_date, 
                         end_date=end_date, 
                         starting_allocation=starting_allocation, 

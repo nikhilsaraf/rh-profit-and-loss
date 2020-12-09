@@ -95,10 +95,11 @@ def order_item_info(order, my_trader, df):
                 print('')
                 raise Exception()
         folio[symbol] = symHistory
-
-        if order['state'] != 'filled':
-            print('state not \'filled\' ({}) but we have {} executions (last one printed above).'.format(order['state'], len(order['executions'])))
-            raise Exception()
+        
+        # NS commenting out here because this is not correct, cancelled orders can be partially filled before cancellation
+        #if order['state'] != 'filled':
+        #    print('state not \'filled\' ({}) but we have {} executions (last one printed above).'.format(order['state'], len(order['executions'])))
+        #    raise Exception()
         # printmaps after every execution
         printMaps()
     

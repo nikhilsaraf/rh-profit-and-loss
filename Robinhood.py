@@ -91,6 +91,13 @@ class Robinhood:
 
         return self.login(username=username, password=password)
 
+    def set_oath_access_token(self, username, password, access_token):
+        self.username = username
+        self.password = password
+        self.oauth_token = access_token
+        self.headers['Authorization'] = 'Bearer ' + self.oauth_token
+        return True
+
     def login(self, username, password, mfa_code=None):
 
             self.username = username
