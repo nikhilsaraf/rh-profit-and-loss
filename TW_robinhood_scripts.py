@@ -90,16 +90,18 @@ def order_item_info(order, my_trader, df):
                     symHistory.pop(0)
 
             if len(symHistory) == 0 and eq > 0:
-                print('')
+                print('*******************************************************************')
                 print('error, len(symHistory) == 0 and eq = {} for last trade'.format(eq))
-                print('')
-                raise Exception()
+                print('*******************************************************************')
+                # NS don't throw here - we encounter this with SCHW which was converted from TDA so has no history but is still in the account
+                # raise Exception()
         folio[symbol] = symHistory
         
-        # NS commenting out here because this is not correct, cancelled orders can be partially filled before cancellation
-        #if order['state'] != 'filled':
-        #    print('state not \'filled\' ({}) but we have {} executions (last one printed above).'.format(order['state'], len(order['executions'])))
-        #    raise Exception()
+        if order['state'] != 'filled':
+            print('state not \'filled\' ({}) but we have {} executions (last one printed above).'.format(order['state'], len(order['executions'])))
+            # NS dont throw here - this is not correct, cancelled orders can be partially filled before cancellation
+            #raise Exception()
+
         # printmaps after every execution
         printMaps()
     
